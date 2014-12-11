@@ -2,14 +2,14 @@
 import subprocess
 
 
-class user(object):
+class User(object):
 
     def __init__(self, username, gid):
         self.username = username
         self.gid = gid
 
     def is_valid(self, valid):
-        if self.gid in valid:
+        if str(self.gid) in valid:
             return True
         return False
 
