@@ -26,5 +26,24 @@ class TestUserIsValidMethod(unittest.TestCase):
         user = groupcheck.User("jerkface", None)
         self.assertFalse(user.is_valid(self.valid))
 
+
+class TestGetUser(unittest.TestCase):
+
+    def setUp(self):
+        with open('testdata/passwd.txt', 'r') as f:
+            self.passwd = f.read()
+
+        self.result = [
+            groupcheck.User("root", "0"),
+            groupcheck.User("daemon", "1"),
+            groupcheck.User("bin", "2"),
+            groupcheck.User("sys", "3"), 
+            groupcheck.User("sync", "4")
+        ]
+
+    def GetUserOutput(self):
+        self.assertEqual(groupcheck.get_users(self.passwd), self.result)
+
+
 if __name__ == "__main__":
     unittest.main()

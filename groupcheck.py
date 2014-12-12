@@ -13,10 +13,14 @@ class User(object):
             return True
         return False
 
+    def __str__(self):
+        return "{username: %s, gid: %s}" % (self.username, self.gid)
 
-def get_valid():
+
+def get_valid(groups=None):
     result = []
-    groups = subprocess.check_output(["getent", "group"])
+    if groups is None:
+        groups = subprocess.check_output(["getent", "group"])
     groups = groups.splitlines()
     for i in groups:
         i = i.split(":")
@@ -24,18 +28,26 @@ def get_valid():
     return result
 
 
-def get_users():
-    users = subprocess.check_output(["getent", "passwd"])
+def get_users(users=None):
+    if users is None:
+        users = subprocess.check_output(["getent", "passwd"])
     users = users.splitlines()
     for i in users:
         i = i.split(":")
-        yield user(i[0], i[3])
+        yield User(i[0], i[3])
 
 
 def groupcheck(valid=get_valid(), users=get_users()):
+    """Takes a list of valid gids and compares a user list to it. valid should
+    be given a list of strings. users should be a string with the contents of a
+    linux /etc/passwd file"""
+    fail_count = 0
     for i in users:
         if not i.is_valid(valid):
+            fail_count += 1
             print "user %s has invalid group id %s" % (i.username, i.gid)
+    if fail_count == 0:
+        print "No users have an invalid group id"
 
 
 if __name__ == "__main__":
