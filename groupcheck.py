@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import subprocess
+import sys
 
 
 class User(object):
@@ -34,10 +35,10 @@ def get_users(users=None):
     users = users.splitlines()
     for i in users:
         i = i.split(":")
-        yield User(i[0], i[3])
+        yield User(i[0], i[2])
 
 
-def groupcheck(valid=get_valid(), users=get_users()):
+def groupcheck(users=get_users(), valid=get_valid()):
     """Takes a list of valid gids and compares a user list to it. valid should
     be given a list of strings. users should be a string with the contents of a
     linux /etc/passwd file"""
@@ -51,4 +52,12 @@ def groupcheck(valid=get_valid(), users=get_users()):
 
 
 if __name__ == "__main__":
-    groupcheck()
+    if len(sys.argv) == 3:
+        u, g = sys.argv[1], sys.argv[2]
+        with open(u, 'r') as f:
+            u = f.read()
+        with open(g, 'r') as f:
+            g = f.read()
+        groupcheck(users=get_users(u), valid=get_valid(g))
+    else:
+        groupcheck()
