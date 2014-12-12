@@ -41,8 +41,31 @@ class TestGetUser(unittest.TestCase):
             groupcheck.User("sync", "4")
         ]
 
-    def GetUserOutput(self):
-        self.assertEqual(groupcheck.get_users(self.passwd), self.result)
+    def testGetUserOutput(self):
+        userlist = []
+        for i in groupcheck.get_users(users=self.passwd):
+            userlist.append(i)
+        for i in xrange(5):
+            self.assertEqual(self.result[i].username, userlist[i].username)
+            self.assertEqual(self.result[i].gid, userlist[i].gid)
+
+
+class TestGetValid(unittest.TestCase):
+
+    def setUp(self):
+        with open('testdata/group.txt', 'r') as f:
+            self.group = f.read()
+
+        self.result = [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4"
+        ]
+
+    def testGetValidOutput(self):
+        self.assertEqual(groupcheck.get_valid(self.group), self.result)
 
 
 if __name__ == "__main__":
